@@ -1,7 +1,53 @@
 (function(window, angular, jasmine, undefined) {
    window.t = {};
 
+   var $controllerProvider;
+   var controllerDependencies = {};
+
+   var findControllerDependencies = function(controllerName) {
+      var dependencies = controllerDependencies[controllerName];
+
+      if(dependencies) {
+         return dependencies;
+      }
+
+      dependencies = controllerDependencies[controllerName] = {};
+
+      var found = $controllerProvider.register.calls.allArgs().some(
+         function(args) {
+            if(args[0] === controllerName) {
+               var constructorFn = args[1];
+               var dependencyNames = angular.injector().annotate(constructorFn);
+
+               dependencyNames.forEach(function(dep) {
+                  if(dep === '$scope') {
+                     dependencies[dep] = t.inject('$rootScope').$new();
+                  } else {
+                     dependencies[dep] = t.inject(dep);
+                  }
+               });
+
+               return true;
+            }
+         });
+
+      if(!found) {
+         throw new Error(controllerName + ' controller was not found.');
+      }
+
+      return dependencies;
+   };
+
+   var init = function() {
+      module(function(_$controllerProvider_) {
+         $controllerProvider = _$controllerProvider_;
+         spyOn($controllerProvider, 'register').and.callThrough();
+      });
+   };
+
    t.module = function(moduleName) {
+      init();
+
       if(!moduleName) {
          throw new Error('You must specify the module name');
       }
@@ -14,11 +60,29 @@
    t.inject = function(name) {
       var injected = null;
 
-      inject([name, function(v) {
-         injected = v;
-      }]);
+      inject([
+         name, function(v) {
+            injected = v;
+         }]);
 
       return injected;
+   };
+
+   t.controller = function(name) {
+      var $controller = t.inject('$controller');
+
+      var dependencies = findControllerDependencies(name);
+      var controller = $controller(name, dependencies);
+
+      if(typeof controller._t !== 'undefined') {
+         throw new Error(
+            '_t controller property is reserved for angular-jasmine-helpers.'
+         );
+      }
+
+      controller._t = { dependencies: dependencies };
+
+      return controller;
    };
 
    t.mock = {
