@@ -2,16 +2,9 @@
    window.t = {};
 
    var $controllerProvider;
-   var controllerDependencies = {};
 
    var findControllerDependencies = function(controllerName) {
-      var dependencies = controllerDependencies[controllerName];
-
-      if(dependencies) {
-         return dependencies;
-      }
-
-      dependencies = controllerDependencies[controllerName] = {};
+      var dependencies = {};
 
       var found = $controllerProvider.register.calls.allArgs().some(
          function(args) {
