@@ -60,19 +60,29 @@
    t.inject = function(name) {
       var injected = null;
 
-      inject([
-         name, function(v) {
-            injected = v;
-         }]);
+      inject([name, function(v) {
+         injected = v;
+      }]);
 
       return injected;
    };
 
-   t.controller = function(name) {
+   t.controller = function(controllerName, services) {
       var $controller = t.inject('$controller');
 
-      var dependencies = findControllerDependencies(name);
-      var controller = $controller(name, dependencies);
+      var dependencies = findControllerDependencies(controllerName);
+
+      services = services || {};
+      Object.keys(services).forEach(function(serviceName) {
+         if(!dependencies[serviceName]) {
+            throw new Error(
+                  controllerName + ' does not depend on ' + serviceName);
+         }
+
+         dependencies[serviceName] = services[serviceName];
+      });
+
+      var controller = $controller(controllerName, dependencies);
 
       if(typeof controller._t !== 'undefined') {
          throw new Error(
