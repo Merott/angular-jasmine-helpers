@@ -60,6 +60,24 @@
       return injected;
    };
 
+   t.provider = function(moduleName, providerName) {
+      var provider;
+
+      module(moduleName);
+
+      if(providerName.indexOf('Provider') === -1) {
+         providerName += 'Provider';
+      }
+
+      module([providerName, function(p) {
+         provider = p;
+      }]);
+
+      inject();
+
+      return provider
+   };
+
    t.controller = function(controllerName, services) {
       var $controller = t.inject('$controller');
 
@@ -90,6 +108,8 @@
 
    t.mock = {
       provider: function(moduleName, provider, methods) {
+         methods = methods || [];
+
          module(moduleName);
 
          if(provider.indexOf('Provider') === -1) {
