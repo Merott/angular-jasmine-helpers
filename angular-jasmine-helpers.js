@@ -123,6 +123,22 @@
          });
 
          return mock;
+      },
+
+      service: function(moduleName, serviceName, methods) {
+         methods = methods || [];
+
+         module(moduleName);
+
+         var mock = jasmine.createSpyObj(serviceName, methods);
+
+         module(function($provide) {
+            $provide.factory(serviceName, function() {
+               return mock;
+            });
+         });
+
+         return mock;
       }
    };
 
