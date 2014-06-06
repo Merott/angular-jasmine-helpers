@@ -142,4 +142,74 @@
       }
    };
 
+   var replacer = function(k, v) {
+      if(typeof v === 'function') {
+         v = v.toString();
+      } else if(window['File'] && v instanceof File) {
+         v = '[File]';
+      } else if(window['FileList'] && v instanceof FileList) {
+         v = '[FileList]';
+      }
+      return v;
+   };
+
+   beforeEach(function() {
+      jasmine.Expectation.addMatchers({
+         toJsonEqual: function() {
+            return {
+               compare: function(actual, expected) {
+                  var one = undefined, two = undefined;
+
+                  return {
+                     pass: (function() {
+                        one = JSON.stringify(actual, replacer)
+                           .replace(/(\\t|\\n)/g, '');
+
+                        two = JSON.stringify(expected, replacer)
+                           .replace(/(\\t|\\n)/g, '');
+
+                        return one === two;
+                     })(),
+                     message: 'Expected JSON representation of items to match' +
+                              "\nactual:   " + one + "\nexpected: " + two
+                  };
+               }
+            };
+         },
+         toInject: function() {
+            return {
+               compare: function(controller, dependencies, checkProperties) {
+                  return {
+                     pass: (function() {
+                        if(!controller._t) {
+                           throw new Error ('Not an Angular controller');
+                        }
+
+                        depNames= Object.keys(controller._t.dependencies);
+
+                        expect(depNames)
+                           .toEqual(dependencies, controller._t.name
+                              + ' injects the wrong services');
+
+                        if(checkProperties !== false) {
+                           depNames.forEach(function(depName) {
+                              if(controller[depName] != t.inject(depName)) {
+                                 throw new Error('Controller "'+
+                                                 controller._t.name +
+                                                 '" does not put "'+ depName +
+                                                 '" on itself' )
+                              }
+                           });
+                        }
+
+                        return true;
+                     })(),
+                     message: ''
+                  };
+               }
+            };
+         }
+      });
+   });
+
 })(window, window.angular, window.jasmine);
