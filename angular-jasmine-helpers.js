@@ -101,7 +101,7 @@
          );
       }
 
-      controller._t = { dependencies: dependencies };
+      controller._t = { dependencies: dependencies, name: controllerName };
 
       return controller;
    };
