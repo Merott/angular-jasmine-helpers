@@ -125,12 +125,18 @@
          return mock;
       },
 
-      service: function(moduleName, serviceName, methods) {
-         methods = methods || [];
+      service: function(moduleName, serviceName, methodsOrMockObj) {
+         methodsOrMockObj = methodsOrMockObj || [];
 
-         module(moduleName);
+         if(moduleName !== null)
+            module(moduleName);
 
-         var mock = jasmine.createSpyObj(serviceName, methods);
+         var mock;
+         if(angular.isArray(methodsOrMockObj)) {
+            mock = jasmine.createSpyObj(serviceName, methodsOrMockObj);
+         } else {
+            mock = methodsOrMockObj
+         }
 
          module(function($provide) {
             $provide.factory(serviceName, function() {
