@@ -199,7 +199,8 @@
 
                         if(checkProperties !== false) {
                            depNames.forEach(function(depName) {
-                              if(controller[depName] != t.inject(depName)) {
+                              if(depName !== '$scope' &&
+                                 controller[depName] != t.inject(depName)) {
                                  throw new Error('Controller "'+
                                                  controller._t.name +
                                                  '" does not put "'+ depName +
