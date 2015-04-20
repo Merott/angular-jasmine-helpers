@@ -148,6 +148,10 @@
       }
    };
 
+   t.digest = function() {
+      t.inject('$rootScope').$digest();
+   };
+
    var replacer = function(k, v) {
       if(typeof v === 'function') {
          v = v.toString();
