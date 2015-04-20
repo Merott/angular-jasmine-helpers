@@ -1,8 +1,8 @@
 # angular-jasmine-helpers
 
-A small set of helper methods to make testing AngularJS applications with Jasmine more fun. I don't like `beforeEach` blocks, and find them to make tests hard to follow and debug. The only times I use `beforeEach` is to expose a function on `this`, to DRY out common functionality of children scenarios. See below for a small sample of my Jasmine tests.
+*Disclaimer: I created this for my own personal use, to keep my tests DRY without using `beforeEach` blocks and the like. It could be massively improved, and some of its helpers aren't very useful now that I've learnt more about testing Angular modules. For example, there isn't much point in merely testing the dependencies list of an Angular module - what was I thinking?... I will continue to iteratively improve things as and when I feel the need to. Feel free to use it, and feel free to make suggestions and improvements.*
 
-I created this for my own personal use, to keep my tests DRY without using `beforeEach` blocks and the like. I will continue to iteratively improve this little library as and when I need to.
+A small set of helper methods to make testing AngularJS applications with Jasmine more fun. I don't like `beforeEach` blocks, and find them to make tests hard to follow and debug. The only times I use `beforeEach` is to expose a function on `this`, to DRY out common functionality of children scenarios. See below for a small sample of my Jasmine tests.
 
 ## Example (CoffeeScript)
 
