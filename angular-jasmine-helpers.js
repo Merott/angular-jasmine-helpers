@@ -1,4 +1,4 @@
-(function(window, angular, jasmine, undefined) {
+(function(window, document, angular, jasmine, undefined) {
    window.t = {};
 
    var $controllerProvider;
@@ -152,6 +152,18 @@
       t.inject('$rootScope').$digest();
    };
 
+   t.dom = {
+      query: function(root, selector) {
+         if(!root) {
+            root = document;
+         } else if(root.html) {
+            root = root[0];
+         }
+
+         return angular.element(root.querySelectorAll(selector));
+      }
+   };
+
    var replacer = function(k, v) {
       if(typeof v === 'function') {
          v = v.toString();
@@ -223,4 +235,4 @@
       });
    });
 
-})(window, window.angular, window.jasmine);
+})(window, window.document, window.angular, window.jasmine);
